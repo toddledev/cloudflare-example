@@ -4,18 +4,21 @@ import { takeIncludedComponents } from '@toddledev/ssr/dist/components/utils'
 import { removeTestData } from '@toddledev/ssr/dist/rendering/testData'
 import { replaceTagInNodes } from '@toddledev/ssr/dist/utils/tags'
 import { getFontCssUrl } from '@toddledev/ssr/src/rendering/fonts'
-import { escapeSearchParameter } from '@toddledev/ssr/src/rendering/request'
 import { transformRelativePaths } from '@toddledev/ssr/src/utils/media'
 import type { Context } from 'hono'
-import type { HonoEnv } from '../../hono'
+import type { HonoComponent, HonoEnv, HonoProject } from '../../hono'
 
 export const customElement = async (
-  ctx: Context<HonoEnv, '/.toddle/custom-element/:filename{.+.js}'>,
+  ctx: Context<
+    HonoEnv<HonoProject & HonoComponent>,
+    '/.toddle/custom-element/:filename{.+.js}'
+  >,
 ) => {
   const url = new URL(ctx.req.url)
+  const project = ctx.var.project
   // Get name of the component from the URL path (e.g. https://toddle.dev/.toddle/custom-element/MyComponent.js) -> MyComponent
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const name = ctx.req.param('filename')?.replace('.js', '')
+  // const name = ctx.req.param('filename')?.replace('.js', '')
   const errorResponse = (error: string, status: 403 | 404) =>
     ctx.json(
       {
@@ -31,17 +34,18 @@ export const customElement = async (
         status,
       },
     )
-  const { files, project } = ctx.var.project
+  const files = ctx.var.files
   try {
-    const component = Object.values(files.components).find(
-      (c) => c!.name === name,
-    )
-    if (!component) {
-      return errorResponse(
-        `Unable to find component ${escapeSearchParameter(name)}`,
-        404,
-      )
-    }
+    const component = ctx.var.component
+    // const component = Object.values(files.components).find(
+    //   (c) => c!.name === name,
+    // )
+    // if (!component) {
+    //   return errorResponse(
+    //     `Unable to find component ${escapeSearchParameter(name)}`,
+    //     404,
+    //   )
+    // }
 
     if (component.route) {
       return errorResponse(

@@ -2,14 +2,14 @@ import { applyFormula } from '@toddledev/core/dist/formula/formula'
 import { validateUrl } from '@toddledev/core/dist/utils/url'
 import type { Context } from 'hono'
 import { stream } from 'hono/streaming'
-import type { HonoEnv } from '../../hono'
+import type { HonoEnv, HonoProject } from '../../hono'
 
 const MANIFEST_CONTENT_TYPE = 'application/manifest+json'
 
-export const manifest = async (c: Context<HonoEnv>) => {
+export const manifest = async (c: Context<HonoEnv<HonoProject>>) => {
   try {
     const manifestUrl = applyFormula(
-      c.var.project.files.config?.meta?.manifest?.formula,
+      c.var.config?.meta?.manifest?.formula,
       undefined as any,
     )
     const validManifestUrl = validateUrl(manifestUrl)

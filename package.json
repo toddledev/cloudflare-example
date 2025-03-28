@@ -1,9 +1,9 @@
 {
   "name": "toddle-cloudflare-worker",
   "scripts": {
-    "predev": "bun scripts/syncStaticAssets.js && bunx esbuild --bundle --outdir=dist --platform=node --format=esm src/index.ts",
+    "predev": "bun scripts/syncStaticAssets.ts && bunx esbuild --bundle --outdir=dist --platform=node --format=esm src/index.ts",
     "dev": "wrangler dev --no-bundle",
-    "build": "bun scripts/syncStaticAssets.js && bunx esbuild --bundle --outdir=dist --platform=node --format=esm src/index.ts",
+    "build": "bun scripts/syncStaticAssets.ts && bunx esbuild --bundle --outdir=dist --platform=node --format=esm src/index.ts",
     "deploy": "wrangler deploy --no-bundle",
     "typecheck": "tsc --noEmit",
     "watch": "tsc --noEmit -w",
@@ -12,14 +12,14 @@
     "prettier:write": "prettier --write  '*.{json,js}' './**/*.{js,ts}'"
   },
   "dependencies": {
-    "@toddledev/core": "0.0.9",
-    "@toddledev/ssr": "0.0.9",
+    "@toddledev/core": "link:@toddledev/core",
+    "@toddledev/ssr": "link:@toddledev/ssr",
     "hono": "4.6.16"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20250303.0",
     "@eslint/js": "9.22.0",
-    "@toddledev/runtime": "0.0.9",
+    "@toddledev/runtime": "link:@toddledev/runtime",
     "@typescript-eslint/eslint-plugin": "8.26.0",
     "@typescript-eslint/parser": "8.26.0",
     "eslint-plugin-inclusive-language": "2.2.1",

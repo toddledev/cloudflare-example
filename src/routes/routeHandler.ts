@@ -3,11 +3,14 @@ import { REWRITE_HEADER } from '@toddledev/core/dist/utils/url'
 import { getRouteDestination } from '@toddledev/ssr/dist/routing/routing'
 import type { Route } from '@toddledev/ssr/dist/ssr.types'
 import type { Context } from 'hono'
-import type { HonoEnv } from '../../hono'
+import type { HonoEnv, HonoRoute, HonoRoutes } from '../../hono'
 
-export const routeHandler = async (c: Context<HonoEnv>, route: Route) => {
+export const routeHandler = async (
+  c: Context<HonoEnv<HonoRoutes & HonoRoute>>,
+  route: Route,
+) => {
   const destination = getRouteDestination({
-    files: c.var.project.files,
+    files: {} as any, // c.var.project.files,
     req: c.req.raw,
     route,
   })
