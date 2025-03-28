@@ -3,12 +3,12 @@ import { validateUrl } from '@toddledev/core/dist/utils/url'
 import { isDefined } from '@toddledev/core/dist/utils/util'
 import type { Context } from 'hono'
 import { stream } from 'hono/streaming'
-import type { HonoEnv } from '../../hono'
+import type { HonoEnv, HonoProject } from '../../hono'
 
-export const favicon = async (c: Context<HonoEnv>) => {
+export const favicon = async (c: Context<HonoEnv<HonoProject>>) => {
   try {
     const iconUrl = applyFormula(
-      c.var.project.files.config?.meta?.icon?.formula,
+      c.var.config?.meta?.icon?.formula,
       undefined as any,
     )
     const validIconUrl = validateUrl(iconUrl)

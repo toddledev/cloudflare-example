@@ -2,13 +2,13 @@ import { applyFormula } from '@toddledev/core/dist/formula/formula'
 import { validateUrl } from '@toddledev/core/dist/utils/url'
 import type { Context } from 'hono'
 import { stream } from 'hono/streaming'
-import type { HonoEnv } from '../../hono'
+import type { HonoEnv, HonoProject } from '../../hono'
 
 const ROBOTS_CONTENT_TYPE = 'text/plain'
 
-export const robots = async (c: Context<HonoEnv>) => {
+export const robots = async (c: Context<HonoEnv<HonoProject>>) => {
   try {
-    const robots = c.var.project.files.config?.meta?.robots
+    const robots = c.var.config?.meta?.robots
     // we don't provide a context below, as the formula should just be a value formula
     const robotsUrl = applyFormula(robots?.formula, undefined as any)
     const validatedRobotsUrl = validateUrl(robotsUrl)

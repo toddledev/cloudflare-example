@@ -3,11 +3,11 @@ import { validateUrl } from '@toddledev/core/dist/utils/url'
 import { isDefined } from '@toddledev/core/dist/utils/util'
 import type { Context } from 'hono'
 import { stream } from 'hono/streaming'
-import type { HonoEnv } from '../../hono'
+import type { HonoEnv, HonoProject } from '../../hono'
 
-export const serviceWorker = async (c: Context<HonoEnv>) => {
+export const serviceWorker = async (c: Context<HonoEnv<HonoProject>>) => {
   try {
-    const config = c.var.project.files.config
+    const config = c.var.config
     const serviceWorkerUrl = isDefined(config?.meta?.serviceWorker)
       ? // We don't need to provide a context for applyFormula, as the formula should just be a value formula
         applyFormula(config.meta.serviceWorker.formula, undefined as any)

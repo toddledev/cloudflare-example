@@ -1,19 +1,21 @@
 import type { PageComponent } from '@toddledev/core/dist/component/component.types'
-import { isPageComponent } from '@toddledev/core/dist/component/isPageComponent'
 import { applyFormula } from '@toddledev/core/dist/formula/formula'
 import { validateUrl } from '@toddledev/core/dist/utils/url'
 import { isDefined } from '@toddledev/core/dist/utils/util'
 import type { Context } from 'hono'
 import { stream } from 'hono/streaming'
-import type { HonoEnv } from '../../hono'
+import type { HonoEnv, HonoProject, HonoRoutes } from '../../hono'
 
 const SITEMAP_CONTENT_TYPE = 'application/xml'
 
-export const sitemap = async (c: Context<HonoEnv>) => {
+export const sitemap = async (
+  c: Context<HonoEnv<HonoProject & HonoRoutes>>,
+) => {
   try {
     const url = new URL(c.req.url)
-    const project = c.var.project
-    const sitemapFormula = project.files.config?.meta?.sitemap?.formula
+    const config = c.var.config
+    const routes = c.var.routes
+    const sitemapFormula = config?.meta?.sitemap?.formula
     if (isDefined(sitemapFormula)) {
       const sitemapUrl = validateUrl(
         // we don't provide a context for applyFormula, as the formula should just be a value formula
@@ -35,10 +37,8 @@ export const sitemap = async (c: Context<HonoEnv>) => {
       const content = `\
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${Object.values(project.files.components)
+  ${Object.values(routes.pages)
     .filter((component, i): component is PageComponent =>
-      component &&
-      isPageComponent(component) &&
       // only include static routes
       component.route?.path.every((path) => path.type === 'static') &&
       // limit to 1000 pages for now to keep performance reasonable
